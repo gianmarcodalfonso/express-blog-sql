@@ -1,25 +1,18 @@
 //importo i dati dei posts
-const posts = require(`../data/db.js`);
+const connection = require(`../data/db.js`);
 
 // definizione delle funzioni che verranno richiamate
 //index
 const index = (req, res) => {
-	//recupero eventuale chiave
-	const tag = req.query.tag;
+	const sql = "SELECT * FROM blog_db.posts";
 
-	//definisco una variabile che contenga i post filtrati
-	let filteredPosts = posts;
-
-	//verifico la richiesta
-	if (tag) {
-		filteredPosts = posts.filter((item) => {
-			return item.tags
-				.map((tag) => tag.toLowerCase())
-				.includes(tag.toLowerCase());
-		});
-	}
-
-	res.json(posts);
+	connection.query(sql, (err, results) => {
+		if (err)
+			return res
+				.status(500)
+				.json({ error: "Errore durante l'esecuzione della query: " + err });
+		res.json(results);
+	});
 };
 
 //show
