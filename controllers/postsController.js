@@ -77,11 +77,15 @@ const modify = (req, res) => {
 const destroy = (req, res) => {
 	const id = parseInt(req.params.id);
 
-	const post = posts.find((item) => item.id === id);
+	const sql = "DELETE FROM blog_db.posts WHERE id = ?";
 
-	posts.splice(posts.indexOf(post), 1);
-
-	res.sendStatus(204);
+	connection.query(sql, [id], (err) => {
+		if (err)
+			return res
+				.status(500)
+				.json({ error: "Errore nell'esecuzione della query: " + err });
+		res.sendStatus(204);
+	});
 };
 
 module.exports = {
