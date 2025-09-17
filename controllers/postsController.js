@@ -19,15 +19,19 @@ const index = (req, res) => {
 const show = (req, res) => {
 	const id = parseInt(req.params.id);
 
-	const post = posts.find((item) => item.id === id);
+	const sql = "SELECT * FROM blog_db.posts WHERE id = ?";
 
-	if (!post) {
-		return res
-			.status(404)
-			.json({ error: "not found", message: "Post non trovato" });
-	}
+	connection.query(sql, [id], (err, results) => {
+		if (err)
+			return res
+				.status(500)
+				.json({ error: "Errore durante l'esecuzione della query: " + err });
 
-	res.json(post);
+		if (results.length === 0)
+			return res.status(404).json({ error: "Post non trovato" });
+
+		res.json(results[0]);
+	});
 };
 
 //store
